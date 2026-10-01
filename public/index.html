@@ -41,14 +41,14 @@
     width: 100%;
     max-width: 40rem;
     margin: 0 auto;
-    padding: clamp(2.5rem, 8vh, 5rem) 7vw 2rem;
+    padding: clamp(1.5rem, 6vh, 4rem) 7vw 1rem;
     text-align: center;
   }
   .logo {
     display: block;
-    width: clamp(180px, 46vw, 260px);
+    width: clamp(150px, min(46vw, 30vh), 250px);
     height: auto;
-    margin: 0 auto 2.5rem;
+    margin: 0 auto clamp(1.25rem, 3.5vh, 2.5rem);
   }
   .eyebrow {
     font-size: 0.8rem;
@@ -66,25 +66,50 @@
   }
   p { color: var(--muted); }
 
-  /* The setting sun, sinking behind the beach strip below */
+  /* The setting sun: rises into view high above the horizon, then sinks all
+     the way below it, warming from the logo's yellow through orange and pink
+     to purple while a dusk glow spreads along the horizon. */
   .horizon {
+    --size: clamp(90px, min(18vw, 15vh), 170px);  /* scales with screen height so the horizon stays in view */
     position: relative;
-    height: clamp(90px, 16vh, 150px);
+    height: calc(var(--size) * 1.9);
     overflow: hidden;
+  }
+  .horizon::before {            /* dusk glow on the horizon */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 90% at 50% 100%, rgba(242, 84, 125, 0.32), rgba(142, 68, 173, 0.14) 45%, transparent 75%);
+    opacity: 0.7;
   }
   .sun {
     position: absolute;
     left: 50%;
     bottom: 0;
-    width: clamp(140px, 26vw, 240px);
+    width: var(--size);
     aspect-ratio: 1;
     border-radius: 50%;
     background: radial-gradient(circle at 50% 40%, #FDE14A 0%, #FBC02D 55%, #F5A524 100%);
-    transform: translate(-50%, 50%);
+    transform: translate(-50%, 35%);  /* without motion: resting mid-set */
   }
+  .sun::before,
+  .sun::after {                  /* sunset colours, faded in one after another */
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+  }
+  .sun::before { background: radial-gradient(circle at 50% 40%, #FFB45A 0%, #FF8A3D 60%, #F06A2E 100%); opacity: 1; }
+  .sun::after  { background: radial-gradient(circle at 50% 40%, #F7779A 0%, #E0508A 50%, #8E44AD 100%); opacity: 0.6; }
   @media (prefers-reduced-motion: no-preference) {
-    .sun { animation: set 2.4s cubic-bezier(.3,.6,.2,1) both; }
-    @keyframes set { from { transform: translate(-50%, 10%); } to { transform: translate(-50%, 50%); } }
+    .sun            { animation: set 10s cubic-bezier(.45,.05,.55,.95) 0.6s both; }
+    .sun::before    { animation: to-orange 10s linear 0.6s both; }
+    .sun::after     { animation: to-dusk 10s linear 0.6s both; }
+    .horizon::before { animation: glow 10s ease-in-out 0.6s both; }
+    @keyframes set       { from { transform: translate(-50%, -80%); } to { transform: translate(-50%, 102%); } }
+    @keyframes to-orange { 0%, 8% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 1; } }
+    @keyframes to-dusk   { 0%, 35% { opacity: 0; } 72%, 100% { opacity: 1; } }
+    @keyframes glow      { 0%, 20% { opacity: 0; } 75% { opacity: 1; } 100% { opacity: 0.8; } }
   }
 
   /* The beach strip under the logo's wave, carried down to the page footer */
