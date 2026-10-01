@@ -1,0 +1,8 @@
+{
+  // Deploys this repo to the "getbluesky" Worker.
+  "name": "getbluesky",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public"
+  }
+}
